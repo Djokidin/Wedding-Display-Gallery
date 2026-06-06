@@ -450,17 +450,24 @@
                     }
                 }
             } catch (e) { }
+
+            // Jadwalkan polling berikutnya dengan delay acak 3–5 detik
+            const delay = Math.floor(Math.random() * 2000) + 3000;
+            setTimeout(checkForNewWishes, delay);
         }
 
-        fetchWishesAndBuild();
-        setInterval(checkForNewWishes, 3000);
+        fetchWishesAndBuild().then(() => {
+            // Mulai polling setelah data awal selesai dimuat
+            const firstDelay = Math.floor(Math.random() * 2000) + 3000;
+            setTimeout(checkForNewWishes, firstDelay);
+        });
 
         // ==========================================
         // FEATURED IDLE ENGINE
         // ==========================================
-        const FEATURE_IDLE_MS  = 8000;   // lama item diam di tengah (ms)
-        const FEATURE_W        = 490;    // lebar gambar featured
-        const FEATURE_H        = 630;    // tinggi gambar featured
+        const FEATURE_IDLE_MS = 8000;   // lama item diam di tengah (ms)
+        const FEATURE_W = 490;    // lebar gambar featured
+        const FEATURE_H = 630;    // tinggi gambar featured
         const FEATURE_INTERVAL = 18000;  // seberapa sering trigger (ms)
 
         function triggerFeaturedItem() {
