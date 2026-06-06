@@ -172,6 +172,16 @@
             text-transform: uppercase;
             letter-spacing: 1px;
         }
+
+        /* --- FEATURED ITEM GLOW --- */
+        .gallery-item.is-featured {
+            box-shadow:
+                0 0 0 3px rgba(212, 175, 55, 0.6),
+                0 0 50px rgba(212, 175, 55, 0.25),
+                0 30px 80px rgba(0, 0, 0, 0.25);
+            border-color: rgba(212, 175, 55, 0.5);
+            transition: box-shadow 1s ease, border-color 1s ease;
+        }
     </style>
 </head>
 
@@ -287,7 +297,8 @@
                 targetGy: 0, currentGy: 0,
                 baseGz: (Math.random() - 0.5) * 40,
                 targetW: 200, currentW: 200,
-                targetH: 200, currentH: 200
+                targetH: 200, currentH: 200,
+                idleUntil: 0  // timestamp (ms) sampai kapan item ini "featured" diam di tengah
             };
             allItems.push(itemObj);
         }
@@ -442,7 +453,32 @@
         }
 
         fetchWishesAndBuild();
-        setInterval(checkForNewWishes, 8000);
+        setInterval(checkForNewWishes, 3000);
+
+        // ==========================================
+        // FEATURED IDLE ENGINE
+        // ==========================================
+        const FEATURE_IDLE_MS  = 8000;   // lama item diam di tengah (ms)
+        const FEATURE_W        = 490;    // lebar gambar featured
+        const FEATURE_H        = 630;    // tinggi gambar featured
+        const FEATURE_INTERVAL = 18000;  // seberapa sering trigger (ms)
+
+        function triggerFeaturedItem() {
+            if (allItems.length === 0) return;
+            // Hanya pilih item foto (bukan quote)
+            const candidates = allItems.filter(i => i.type === 'image' && i.idleUntil < Date.now());
+            if (candidates.length === 0) return;
+
+            const chosen = candidates[Math.floor(Math.random() * candidates.length)];
+            chosen.idleUntil = Date.now() + FEATURE_IDLE_MS;
+            chosen.el.classList.add('is-featured');
+        }
+
+        // Tunda 3 detik agar galeri sudah ter-render dulu
+        setTimeout(() => {
+            triggerFeaturedItem();
+            setInterval(triggerFeaturedItem, FEATURE_INTERVAL);
+        }, 3000);
 
         // ==========================================
         // ANIMASI RENDER LOOP (Animasi Morphing Halus)
@@ -451,21 +487,43 @@
             handleParticles();
             scrollOffset -= 1.2; // Kecepatan bergerak
 
+            const now = Date.now();
+
             allItems.forEach(item => {
+                const isFeatured = item.idleUntil > now;
+
+                if (isFeatured) {
+                    // Pin item ke tengah layar: targetBaseGx = -scrollOffset membuat displayX = 0 = center
+                    item.targetBaseGx = -scrollOffset;
+                    item.targetGy = 0;
+                    item.targetW = FEATURE_W;
+                    item.targetH = FEATURE_H;
+                    item.el.style.zIndex = 100;
+                } else {
+                    // Baru saja selesai featured — lepas class glow, kembalikan z-index
+                    if (item.el.classList.contains('is-featured')) {
+                        item.el.classList.remove('is-featured');
+                        item.el.style.zIndex = item.type === 'quote' ? 20 : 1;
+                        // Kembalikan ke ukuran normal (masonry default)
+                        item.targetW = 220;
+                        item.targetH = 300;
+                    }
+                }
+
                 // Lerp Ukuran
-                item.currentW += (item.targetW - item.currentW) * 0.03;
-                item.currentH += (item.targetH - item.currentH) * 0.03;
+                item.currentW += (item.targetW - item.currentW) * 0.08;
+                item.currentH += (item.targetH - item.currentH) * 0.08;
                 item.el.style.setProperty('--w', `${item.currentW}px`);
                 item.el.style.setProperty('--h', `${item.currentH}px`);
 
                 // Lerp Posisi X dan Y
-                item.currentBaseGx += (item.targetBaseGx - item.currentBaseGx) * 0.03;
-                item.currentGy += (item.targetGy - item.currentGy) * 0.03;
+                item.currentBaseGx += (item.targetBaseGx - item.currentBaseGx) * 0.08;
+                item.currentGy += (item.targetGy - item.currentGy) * 0.08;
 
                 let displayX = item.currentBaseGx + scrollOffset;
 
-                // Seamless Loop
-                if (displayX < -window.innerWidth - item.currentW) {
+                // Seamless Loop — jangan aktifkan saat item sedang featured
+                if (!isFeatured && displayX < -window.innerWidth - item.currentW) {
                     item.targetBaseGx += totalGridWidth;
                     item.currentBaseGx += totalGridWidth;
                     displayX = item.currentBaseGx + scrollOffset;
