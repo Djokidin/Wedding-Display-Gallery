@@ -1,100 +1,187 @@
 <!DOCTYPE html>
 <html lang="id">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Wedding Gallery - Shape Shifting Display</title>
-    
+
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link href="https://fonts.googleapis.com/css2?family=Ballet:opsz@16..72&family=Playfair+Display:ital,wght@0,400;0,700;1,400&family=Roboto:wght@300;400;700&display=swap" rel="stylesheet">
+    <link
+        href="https://fonts.googleapis.com/css2?family=Monsieur+La+Doulaise&family=Playfair+Display:ital,wght@0,400..900;1,400..900&family=Roboto:ital,wght@0,100..900;1,100..900&display=swap"
+        rel="stylesheet">
 
     <style>
-        * { box-sizing: border-box; }
+        * {
+            box-sizing: border-box;
+        }
 
         :root {
             --bg-color: #fdfdfd;
             --text-color-main: #111;
-            --font-editorial: 'Playfair Display', serif; 
-            --font-sans: 'Roboto', sans-serif;       
+            --font-script: 'Monsieur La Doulaise', cursive;
+            --font-editorial: 'Playfair Display', serif;
+            --font-sans: 'Roboto', sans-serif;
         }
 
-        body { 
+        body {
             font-family: var(--font-editorial);
+            font-style: italic;
             background: var(--bg-color);
-            margin: 0; overflow: hidden; height: 100vh;
-            display: flex; flex-direction: column;
-            justify-content: flex-start; align-items: center; 
+            margin: 0;
+            overflow: hidden;
+            height: 100vh;
+            display: flex;
+            flex-direction: column;
+            justify-content: flex-start;
+            align-items: center;
             perspective: 1200px;
         }
 
         #fullscreen-btn {
-            position: fixed; top: 20px; right: 20px; width: 45px; height: 45px;
-            background: rgba(0, 0, 0, 0.05); color: #333; border: none; border-radius: 50%;
-            cursor: pointer; z-index: 2000; display: flex; justify-content: center; align-items: center;
-            transition: all 0.3s ease; backdrop-filter: blur(5px);
+            position: fixed;
+            top: 20px;
+            right: 20px;
+            width: 45px;
+            height: 45px;
+            background: rgba(0, 0, 0, 0.05);
+            color: #333;
+            border: none;
+            border-radius: 50%;
+            cursor: pointer;
+            z-index: 2000;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            transition: all 0.3s ease;
+            backdrop-filter: blur(5px);
         }
-        #fullscreen-btn:hover { background: #111; color: white; transform: scale(1.1); }
 
-        #particles-canvas { position: fixed; top: 0; left: 0; width: 100vw; height: 100vh; z-index: 0; pointer-events: none; }
+        #fullscreen-btn:hover {
+            background: #111;
+            color: white;
+            transform: scale(1.1);
+        }
+
+        #particles-canvas {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100vw;
+            height: 100vh;
+            z-index: 0;
+            pointer-events: none;
+        }
 
         /* --- TEXT IDLE --- */
         #idle-text {
-            position: fixed; top: 30px; left: 50%; transform: translateX(-50%); 
-            text-align: center; z-index: 900; pointer-events: none;
+            position: fixed;
+            top: 30px;
+            left: 50%;
+            transform: translateX(-50%);
+            text-align: center;
+            z-index: 900;
+            pointer-events: none;
         }
-        #idle-text h1 { 
-            font-family: 'Ballet', cursive; 
-            font-size: 5.5rem; color: var(--text-color-main); 
-            margin: 0; line-height: 1; 
-            text-shadow: 0 0 30px rgba(255,255,255,0.9), 0 0 10px rgba(255,255,255,0.8);
+
+        #idle-text h1 {
+            font-family: var(--font-editorial);
+            font-size: 6rem;
+            color: var(--text-color-main);
+            margin: 0;
+            line-height: 1;
+            text-shadow: 0 0 30px rgba(255, 255, 255, 0.9), 0 0 10px rgba(255, 255, 255, 0.8);
         }
-        #idle-text p { 
-            font-family: var(--font-sans); 
-            font-size: 1.1rem; color: #525252; 
-            letter-spacing: 5px; text-transform: uppercase; 
-            margin-top: 11px; margin-bottom: 0;
-            text-shadow: 0 0 15px rgba(255,255,255,0.9); font-weight: bold;
+
+        #idle-text p {
+            font-family: var(--font-sans);
+            font-size: 1.1rem;
+            color: #525252;
+            letter-spacing: 5px;
+            text-transform: uppercase;
+            margin-top: 11px;
+            margin-bottom: 0;
+            text-shadow: 0 0 15px rgba(255, 255, 255, 0.9);
+            font-weight: bold;
         }
 
         /* --- GALLERY SCENE --- */
         #gallery-scene {
-            width: 100%; height: 100%; position: absolute;
-            top: 0; left: 0; transform-style: preserve-3d;
-            display: flex; justify-content: center; align-items: center; z-index: 1;
+            width: 100%;
+            height: 100%;
+            position: absolute;
+            top: 0;
+            left: 0;
+            transform-style: preserve-3d;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            z-index: 1;
         }
 
         /* --- ITEM STYLING --- */
         .gallery-item {
-            position: absolute; 
-            width: var(--w); height: var(--h); 
-            margin-left: calc(var(--w) / -2); margin-top: calc(var(--h) / -2);
+            position: absolute;
+            width: var(--w);
+            height: var(--h);
+            margin-left: calc(var(--w) / -2);
+            margin-top: calc(var(--h) / -2);
             background: #fff;
-            transform-origin: 50% 50%; 
-            backface-visibility: visible; 
-            box-shadow: 0 15px 35px rgba(0,0,0,0.1); 
-            display: flex; align-items: center; justify-content: center; overflow: hidden;
+            transform-origin: 50% 50%;
+            backface-visibility: visible;
+            box-shadow: 0 15px 35px rgba(0, 0, 0, 0.1);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            overflow: hidden;
             border: 4px solid #fff;
             /* Perhatikan: Tidak ada transisi CSS di sini karena animasi ditangani murni oleh JS (Lerp) */
         }
 
-        .gallery-item img { width: 100%; height: 100%; object-fit: cover; }
+        .gallery-item img {
+            width: 100%;
+            height: 100%;
+            object-fit: cover;
+        }
 
         .quote-card {
-            background: #1a1a1a; border: 4px solid #1a1a1a;
-            color: #fdfdfd; padding: 25px; text-align: center;
-            display: flex; flex-direction: column; justify-content: center;
+            background: #1a1a1a;
+            border: 4px solid #1a1a1a;
+            color: #fdfdfd;
+            padding: 25px;
+            text-align: center;
+            display: flex;
+            flex-direction: column;
+            justify-content: center;
         }
-        .quote-card .msg { font-size: clamp(1rem, 1.2vw, 1.4rem); font-style: italic; line-height: 1.5; margin-bottom: 15px; }
-        .quote-card .author { font-family: var(--font-sans); font-size: 0.85rem; font-weight: bold; color: #D4AF37; text-transform: uppercase; letter-spacing: 1px; }
 
+        .quote-card .msg {
+            font-family: var(--font-editorial);
+            font-size: clamp(1rem, 1.2vw, 1.4rem);
+            font-style: italic;
+            line-height: 1.5;
+            margin-bottom: 15px;
+        }
+
+        .quote-card .author {
+            font-family: var(--font-sans);
+            font-size: 0.85rem;
+            font-weight: bold;
+            color: #D4AF37;
+            text-transform: uppercase;
+            letter-spacing: 1px;
+        }
     </style>
 </head>
+
 <body>
 
     <button id="fullscreen-btn" title="Toggle Fullscreen">
-        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none" stroke-linecap="round" stroke-linejoin="round">
-            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3"></path>
+        <svg viewBox="0 0 24 24" width="20" height="20" stroke="currentColor" stroke-width="2" fill="none"
+            stroke-linecap="round" stroke-linejoin="round">
+            <path d="M8 3H5a2 2 0 0 0-2 2v3m18 0V5a2 2 0 0 0-2-2h-3m0 18h3a2 2 0 0 0 2-2v-3M3 16v3a2 2 0 0 0 2 2h3">
+            </path>
         </svg>
     </button>
 
@@ -113,7 +200,7 @@
         // ==========================================
         // KONFIGURASI API DAN FOTO
         // ==========================================
-        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysC4W5M4P0rOuyns8AsrChdN1XJDgjO7Ja_Cm8b8jY0WNIJ4bu_uyC7kjeek0KDWKN/exec'; 
+        const SCRIPT_URL = 'https://script.google.com/macros/s/AKfycbysC4W5M4P0rOuyns8AsrChdN1XJDgjO7Ja_Cm8b8jY0WNIJ4bu_uyC7kjeek0KDWKN/exec';
 
         const photoPaths = [
             "Casual/DSC_7443.jpg", "Casual/DSC_7513.jpg", "Casual/DSC_7537.jpg", "Casual/DSC_7562.jpg",
@@ -123,15 +210,15 @@
             "Casual/DSC_8044.jpg", "Casual/DSC_8077.jpg", "Casual/DSC_8140.jpg", "Casual/DSC_8187.jpg",
             "Casual/DSC_8199.jpg", "Casual/DSC_8223.jpg", "Casual/DSC_8252.jpg", "Casual/DSC_8265.jpg",
             "Casual/DSC_8273.jpg",
-            "Adat Bali/Jpeg/DSC_0886.jpg", "Adat Bali/Jpeg/DSC_0905.jpg", "Adat Bali/Jpeg/DSC_0921.jpg",
-            "Adat Bali/Jpeg/DSC_0922.jpg", "Adat Bali/Jpeg/DSC_0937.jpg", "Adat Bali/Jpeg/DSC_0984.jpg",
-            "Adat Bali/Jpeg/DSC_1007.jpg", "Adat Bali/Jpeg/DSC_1108.jpg", "Adat Bali/Jpeg/DSC_1120.jpg",
-            "Adat Bali/Jpeg/DSC_1143.jpg", "Adat Bali/Jpeg/DSC_1165.jpg", "Adat Bali/Jpeg/DSC_1190.jpg",
-            "Adat Bali/Jpeg/DSC_1192.jpg", "Adat Bali/Jpeg/DSC_1199.jpg", "Adat Bali/Jpeg/DSC_1221.jpg",
-            "Adat Bali/Jpeg/DSC_1260.jpg", "Adat Bali/Jpeg/DSC_1262.jpg", "Adat Bali/Jpeg/DSC_1335.jpg",
-            "Adat Bali/Jpeg/DSC_1349.jpg", "Adat Bali/Jpeg/DSC_1364.jpg", "Adat Bali/Jpeg/DSC_1372.jpg",
-            "Adat Bali/Jpeg/DSC_1428.jpg", "Adat Bali/Jpeg/DSC_1433.jpg", "Adat Bali/Jpeg/DSC_1436.jpg",
-            "Adat Bali/Jpeg/DSC_1440.jpg"
+            "Adat Bali/JPEG/DSC_0886.jpg", "Adat Bali/JPEG/DSC_0905.jpg", "Adat Bali/JPEG/DSC_0921.jpg",
+            "Adat Bali/JPEG/DSC_0922.jpg", "Adat Bali/JPEG/DSC_0937.jpg", "Adat Bali/JPEG/DSC_0984.jpg",
+            "Adat Bali/JPEG/DSC_1007.jpg", "Adat Bali/JPEG/DSC_1108.jpg", "Adat Bali/JPEG/DSC_1120.jpg",
+            "Adat Bali/JPEG/DSC_1143.jpg", "Adat Bali/JPEG/DSC_1165.jpg", "Adat Bali/JPEG/DSC_1190.jpg",
+            "Adat Bali/JPEG/DSC_1192.jpg", "Adat Bali/JPEG/DSC_1199.jpg", "Adat Bali/JPEG/DSC_1221.jpg",
+            "Adat Bali/JPEG/DSC_1260.jpg", "Adat Bali/JPEG/DSC_1262.jpg", "Adat Bali/JPEG/DSC_1335.jpg",
+            "Adat Bali/JPEG/DSC_1349.jpg", "Adat Bali/JPEG/DSC_1364.jpg", "Adat Bali/JPEG/DSC_1372.jpg",
+            "Adat Bali/JPEG/DSC_1428.jpg", "Adat Bali/JPEG/DSC_1433.jpg", "Adat Bali/JPEG/DSC_1436.jpg",
+            "Adat Bali/JPEG/DSC_1440.jpg"
         ];
         const placeholderImg = "data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHZpZXdCb3g9IjAgMCAxMDAgMTAwIj48cmVjdCB3aWR0aD0iMTAwIiBoZWlnaHQ9IjEwMCIgZmlsbD0iI2U4ZThlOCIvPjwvc3ZnPg==";
 
@@ -158,17 +245,17 @@
             update() { this.y += this.speedY; if (this.y < 0) { this.y = pH; this.x = Math.random() * pW; } }
             draw() { pCtx.fillStyle = `rgba(212, 175, 55, ${this.opacity})`; pCtx.beginPath(); pCtx.arc(this.x, this.y, this.size, 0, Math.PI * 2); pCtx.fill(); }
         }
-        for(let i=0; i<60; i++) particlesArray.push(new Particle());
-        function handleParticles() { pCtx.clearRect(0, 0, pW, pH); for(let i=0; i<particlesArray.length; i++) { particlesArray[i].update(); particlesArray[i].draw(); } }
+        for (let i = 0; i < 60; i++) particlesArray.push(new Particle());
+        function handleParticles() { pCtx.clearRect(0, 0, pW, pH); for (let i = 0; i < particlesArray.length; i++) { particlesArray[i].update(); particlesArray[i].draw(); } }
 
         // ==========================================
         // SISTEM SHAPE-SHIFTING GRID
         // ==========================================
         const galleryContainer = document.getElementById('gallery-container');
-        let allItems = []; 
-        let totalGridWidth = 0; 
-        let scrollOffset = 0; 
-        
+        let allItems = [];
+        let totalGridWidth = 0;
+        let scrollOffset = 0;
+
         // Mode Desain
         const STYLES = ['masonry', 'structured', 'scattered', 'editorial-cluster'];
         let currentStyleIdx = 0;
@@ -176,7 +263,7 @@
         function createItemObject(itemData) {
             const el = document.createElement('div');
             el.className = 'gallery-item';
-            
+
             if (itemData.type === 'quote') {
                 el.classList.add('quote-card');
                 const safeAddress = itemData.data.address ? ` dari ${itemData.data.address}` : '';
@@ -187,7 +274,7 @@
             } else {
                 const img = document.createElement('img');
                 img.src = itemData.src;
-                img.onerror = function() { this.src = placeholderImg; };
+                img.onerror = function () { this.src = placeholderImg; };
                 el.appendChild(img);
             }
 
@@ -214,13 +301,13 @@
             let gap, baseGyList;
 
             // Logika Desain
-            if (styleName === 'structured') { 
-                gap = 10; baseGyList = [-240, 0, 240]; 
-            } else if (styleName === 'scattered') { 
-                gap = 80; baseGyList = [-280, 20, 320]; 
-            } else if (styleName === 'editorial-cluster') { 
+            if (styleName === 'structured') {
+                gap = 10; baseGyList = [-240, 0, 240];
+            } else if (styleName === 'scattered') {
+                gap = 80; baseGyList = [-280, 20, 320];
+            } else if (styleName === 'editorial-cluster') {
                 gap = -30; baseGyList = [-180, 10, 200]; // Bertumpuk
-            } else { 
+            } else {
                 gap = 15; baseGyList = [-230, 10, 250]; // Default Masonry
             }
 
@@ -247,37 +334,42 @@
                         else if (r < 0.5) { w = 250; h = 250; }
                         else { w = 180; h = 180; }
                     } else { // masonry
-                        if (r < 0.25) { w = 320; h = 220; }               
-                        else if (r < 0.5) { w = 220; h = 455; span = 2; } 
-                        else if (r < 0.7) { w = 180; h = 180; }           
-                        else { w = 220; h = 220; }  
+                        if (r < 0.25) { w = 320; h = 220; }
+                        else if (r < 0.5) { w = 220; h = 455; span = 2; }
+                        else if (r < 0.7) { w = 180; h = 180; }
+                        else { w = 220; h = 220; }
                     }
                 }
 
                 // Cari baris terpendek untuk menempatkan item
                 let minRow = 0;
-                for(let i=1; i<3; i++) { if(rowHeights[i] < rowHeights[minRow]) minRow = i; }
-                if (span === 2 && minRow === 2) minRow = 1; 
+                for (let i = 1; i < 3; i++) { if (rowHeights[i] < rowHeights[minRow]) minRow = i; }
+                if (span === 2 && minRow === 2) minRow = 1;
 
                 let gx = rowHeights[minRow];
                 let gy = baseGyList[minRow];
-                if (span === 2) gy = baseGyList[minRow] + ((baseGyList[minRow+1] - baseGyList[minRow])/2); 
-                
+                if (span === 2) gy = baseGyList[minRow] + ((baseGyList[minRow + 1] - baseGyList[minRow]) / 2);
+
                 // Tambahkan sedikit acak untuk style tertentu
                 if (styleName === 'scattered') gy += (Math.random() - 0.5) * 80;
                 if (styleName === 'editorial-cluster') gy += (Math.random() - 0.5) * 60;
 
-                for(let i=0; i<span; i++) { rowHeights[minRow + i] = gx + w + gap; }
+                for (let i = 0; i < span; i++) { rowHeights[minRow + i] = gx + w + gap; }
 
                 // Tetapkan sebagai target. Animasi Lerp akan mengejarnya secara halus
                 itemObj.targetBaseGx = gx;
                 itemObj.targetGy = gy;
                 itemObj.targetW = w;
                 itemObj.targetH = h;
-                
-                // Atur tumpukan gambar
-                if (styleName === 'editorial-cluster') itemObj.el.style.zIndex = Math.floor(Math.random() * 10);
-                else itemObj.el.style.zIndex = 1;
+
+                // Atur tumpukan gambar — quote selalu di depan foto
+                if (itemObj.type === 'quote') {
+                    itemObj.el.style.zIndex = 20;
+                } else if (styleName === 'editorial-cluster') {
+                    itemObj.el.style.zIndex = Math.floor(Math.random() * 10) + 1;
+                } else {
+                    itemObj.el.style.zIndex = 1;
+                }
             });
 
             totalGridWidth = Math.max(...rowHeights) - startX;
@@ -297,7 +389,7 @@
         setInterval(() => {
             currentStyleIdx = (currentStyleIdx + 1) % STYLES.length;
             recalculateLayout(STYLES[currentStyleIdx]);
-        }, 30000); 
+        }, 30000);
 
         // ==========================================
         // FETCH DATA GUESTBOOK
@@ -308,29 +400,26 @@
             let wishesData = [];
             try {
                 const response = await fetch(SCRIPT_URL);
-                if(response.ok) {
+                if (response.ok) {
                     wishesData = await response.json();
                     currentDataLength = wishesData.length;
                 }
-            } catch(e) {}
-            
+            } catch (e) { }
+
             let combinedData = [];
             photoPaths.forEach(src => combinedData.push({ type: 'image', src: src }));
-            
-            if (wishesData.length > 0) {
-                const targetQuoteCount = Math.max(wishesData.length, Math.floor(photoPaths.length / 4));
-                for (let i = 0; i < targetQuoteCount; i++) {
-                    combinedData.push({ type: 'quote', data: wishesData[i % wishesData.length] });
-                }
-            }
-            
+
+            // Tiap ucapan muncul tepat 1 kali — tidak ada duplikat
+            wishesData.forEach(w => combinedData.push({ type: 'quote', data: w }));
+
+            // Acak urutan supaya quote tersebar di antara foto
             for (let i = combinedData.length - 1; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [combinedData[i], combinedData[j]] = [combinedData[j], combinedData[i]];
             }
 
             combinedData.forEach(data => createItemObject(data));
-            
+
             recalculateLayout(STYLES[currentStyleIdx]);
             snapToTarget(); // Setup awal seketika
         }
@@ -338,27 +427,28 @@
         async function checkForNewWishes() {
             try {
                 const response = await fetch(SCRIPT_URL);
-                if(response.ok) {
+                if (response.ok) {
                     const wishes = await response.json();
-                    if(wishes.length > currentDataLength) {
-                        const newWishes = wishes.slice(0, wishes.length - currentDataLength);
+                    if (wishes.length > currentDataLength) {
+                        // Ambil ucapan baru yang belum ada (entri terbaru di akhir array)
+                        const newWishes = wishes.slice(currentDataLength);
                         newWishes.forEach(w => createItemObject({ type: 'quote', data: w }));
                         currentDataLength = wishes.length;
                         // Kalkulasi ulang layout agar ucapan baru langsung tersusun rapi
                         recalculateLayout(STYLES[currentStyleIdx]);
                     }
                 }
-            } catch(e) {}
+            } catch (e) { }
         }
-        
+
         fetchWishesAndBuild();
-        setInterval(checkForNewWishes, 8000); 
+        setInterval(checkForNewWishes, 8000);
 
         // ==========================================
         // ANIMASI RENDER LOOP (Animasi Morphing Halus)
         // ==========================================
         function animate() {
-            handleParticles(); 
+            handleParticles();
             scrollOffset -= 1.2; // Kecepatan bergerak
 
             allItems.forEach(item => {
@@ -371,23 +461,24 @@
                 // Lerp Posisi X dan Y
                 item.currentBaseGx += (item.targetBaseGx - item.currentBaseGx) * 0.03;
                 item.currentGy += (item.targetGy - item.currentGy) * 0.03;
-                
+
                 let displayX = item.currentBaseGx + scrollOffset;
-                
+
                 // Seamless Loop
                 if (displayX < -window.innerWidth - item.currentW) {
                     item.targetBaseGx += totalGridWidth;
-                    item.currentBaseGx += totalGridWidth; 
+                    item.currentBaseGx += totalGridWidth;
                     displayX = item.currentBaseGx + scrollOffset;
                 }
-                
+
                 item.el.style.transform = `translate3d(${displayX}px, ${item.currentGy}px, ${item.baseGz}px)`;
             });
 
             requestAnimationFrame(animate);
         }
-        animate(); 
+        animate();
 
     </script>
 </body>
+
 </html>
